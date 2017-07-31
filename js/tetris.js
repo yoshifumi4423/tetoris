@@ -58,7 +58,7 @@ function newShape() {
       }
     }
   }
-  currentX = 5;
+  currentX = 3;
   currentY = 0;
 }
 
