@@ -62,6 +62,73 @@ function newShape() {
   currentY = 0;
 }
 
+function tick() {
+  if(valid(0, 1)) {
+    ++currentY;
+  } else {
+    freeze();
+    clearLines();
+    if(lose) {
+      newGame();
+      return false;
+    }
 
+    newShape();
+  }
+}
+
+function valid(offsetX = 0 , offsetY = 0, newCurrent = current) {
+  offsetX = currentX + offsetX;
+  offsetY = currentY + offsetY;
+  for(let y = 0; y < 4; ++y) {
+    for(let x = 0; x < 4; ++x) {
+      if(newCurrent[y][x]) {
+        if(typeof board[y + offsetY] === 'undefined' || // if 枠の外
+           typeof board[y + offsetY][x + offsetX] === 'undefined' || // if 枠の外
+           board[y + offsetY][x + offsetX] // if ブロックがすでに積まれている
+           // NOTE: ↓不要と思われるため、いったんコメントアウト
+           // || x + offsetX < 0 || y + offsetY >= ROWS || x + offsetX >= COLS
+           ) {
+          if(offsetY === 1 && offsetX - currentX === 0 && offsetY - currentY === 1) {
+            console.log('game over');
+            lose = true;
+          }
+          return false
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function freeze() {
+  for(let y = 0; y < 4; ++y) {
+    for(let x = 0; x < 4; ++x) {
+      if(current[y][x]) board[y + currentY][x + currentX] = current[y][x];
+    }
+  }
+}
+
+function clearLines() {
+  for(let y = ROWS - 1; y >= 0; --y) {
+    let rowFilled = true;
+    for(let x = 0; x < COLS; ++x) {
+      if(board[y][x] === 0) {
+        rowFilled = false;
+        break;
+      }
+    }
+
+    if(rowFilled) {
+      // document.getElementById( 'clearsound' ).play();
+      for(let yy = y; yy > 0; --y) {
+        for(let x = 0; x < COLS; ++x) {
+          board[yy][x] = board[yy - 1][x];
+        }
+      }
+      ++y;
+    }
+  }
+}
 
 newGame();
