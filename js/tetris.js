@@ -110,6 +110,7 @@ function freeze() {
 }
 
 function clearLines() {
+  console.log("clearlines");
   for(let y = ROWS - 1; y >= 0; --y) {
     let rowFilled = true;
     for(let x = 0; x < COLS; ++x) {
@@ -121,7 +122,7 @@ function clearLines() {
 
     if(rowFilled) {
       // document.getElementById( 'clearsound' ).play();
-      for(let yy = y; yy > 0; --y) {
+      for(let yy = y; yy > 0; --yy) {
         for(let x = 0; x < COLS; ++x) {
           board[yy][x] = board[yy - 1][x];
         }
@@ -129,6 +130,43 @@ function clearLines() {
       ++y;
     }
   }
+}
+
+function keyPress(key) {
+  switch(key) {
+  case 'left':
+    if(valid(-1)) {
+      --currentX;
+    }
+    break;
+  case 'right':
+    if(valid(1)) {
+      ++currentX;
+    }
+    break;
+  case 'down':
+    if(valid(0, 1)) {
+      ++currentY;
+    }
+    break;
+  case 'rotate':
+    let rotated = rotate(current);
+    if(valid(0, 0, rotated)) {
+      current = rotated;
+    }
+    break;
+  }
+}
+
+function rotate(current) {
+  let newCurrent = [];
+  for(let y = 0; y < 4; ++y) {
+    newCurrent[y] = [];
+    for(let x = 0; x < 4; ++x) {
+      newCurrent[y][x] = current[3-x][y];
+    }
+  }
+  return newCurrent;
 }
 
 newGame();
